@@ -1,48 +1,28 @@
 # Overview
 
-This script automates the tediuous steps with a new Hack The Box machine, as well as providing opinionated framework.
+This repo holds a collection of scripts for speeding up working on Hack The Box.
 
-# What it does
+Conventions:
+* `~/htb/xyz.htb` - directory for storing all files
+* `~/htb/xyz.htb/README.md` - file for note taking
+* `~/htb/xyz.htb/noteworthy.txt` - file to track notifications
+* `~/htb/xyz.htb/executed.txt` - file to track recon commands completed
+* `~/htb/xyz.htb/mitm.txt` - file to track requests made to .htb domains via mitmproxy
 
-* Add an entry for `xyz.htb` at the IP provided.
-* Create a directory for your machine at `~/htb/xyz.htb`.
-* Create an empty `README.md`.
-* Create a `noteworthy.txt` file to collect noteworthy discoveries.
-* Notify using `notify-send` for each new discovery.
-* Screenshot `http://xyz.htb`.
-* Recursively download c using wget.
-* Fuzz for virtual hosts under `xyz.htb`.
-* Fuzz for directories and files at `http://xyz.htb`. 
+Automations:
+* `python3 recon.py xyz.htb 10.10.x.y` - port scans, and for HTTP ports: screenshot, wget -r, vhost fuzz, dir & file fuzz
+* `mitmdump -s hackerinthemiddle.py xyy.htb` - captures curl statements to `mitm.txt`.
+* `python3 pingbackdetector.py xyz.htb` - listens for incoming pings on `tun0` (use `ping -s <size>` to distinguish between pings)
+* `python3 fuzz.py xyz.htb` - watches `mitm.txt` and fuzzes to detect response variations for command injection, SQLi, NoSQLi, SSTI, and general errors (see `fuzz_wordlist.txt`)
 
 # Setup
 
 ```bash
 snap install pageres
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 Also ensure seclists is installed to this path: `/usr/share/seclists`.
 
-# Usage
-
-```bash
-python3 recon.py xyz.htb 10.10.x.y
-```
-
-Or, if `xyz.htb` is already in `/etc/hosts`, just:
-
-```bash
-python3 recon.py xyz.htb
-```
-
-# Related
-
-```bash
-python3 pickbackdetector.py xyz.htb
-python3 fuzz.py xyz.htb
-```
-
-```bash
-source venv/bin/activate
-pip install -r requirements
-mitmdump -s hackerinthemiddle.py
-```
