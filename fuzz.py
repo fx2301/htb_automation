@@ -9,7 +9,6 @@ from http.client import HTTPConnection
 import time
 
 ip = subprocess.check_output("ip addr | grep tun0$", shell=True).decode('utf-8').strip().split(' ')[1].split('/')[0]
-print(ip)
 
 fuzzwords = ['12121']
 with open('fuzz_wordlist.txt', 'r') as f:

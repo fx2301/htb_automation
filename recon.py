@@ -8,11 +8,15 @@ HTB_SUBDIR = os.environ.get("HTB_SUBDIR", "htb")
 HOME = os.environ.get("HOME")
 DATA_DIR = f"/{HOME}/{HTB_SUBDIR}"
 
-print(f"Subdirectory for data is {HTB_SUBDIR} (override this with HTB_SUBDIR=xyz")
-print(f"Data directory is therefor {DATA_DIR}")
-print()
-print("--- You will be prompted for sudo password as needed ---")
-print()
+host = sys.argv[1]
+os.chdir(f'{DATA_DIR}/{host}'   )
+
+os.system("touch executed.txt")
+
+executed = []
+with open('executed.txt', 'r') as f:
+    executed = [line.strip() for line in f.readlines()]
+
 def do_cmd(cmd, noteworthy=None, msg_format="Found {0}"):
     global executed
     if cmd in executed:
@@ -49,45 +53,7 @@ def noteworthy(msg):
 
     return False
 
-host = sys.argv[1]
-
-if len(sys.argv) == 3:
-    ip = sys.argv[2]
-else:
-    ip = None
-
-output = subprocess.run(f"grep -F '{host}' /etc/hosts", shell=True, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE).stdout.decode('utf-8')
-
-entry = output.split("\n")[0].split(" ")[0].split("\t")[0]
-
-if len(entry) == 0 and ip is not None:
-    cmd = f"echo '{ip} {host}' | sudo tee -a /etc/hosts"
-    print(cmd)
-    os.system(cmd)
-    
-output = subprocess.check_output(f"ping {host} -c 1", shell=True).decode('utf-8')
-
-os.chdir(DATA_DIR")
-if not os.path.isdir(host):
-    os.mkdir(host) 
-
-os.chdir(host)
-
-output = subprocess.check_output(f"ping {host} -c 1", shell=True).decode('utf-8')
-
-os.system("touch noteworthy.txt")
-print("Monitor for notifications using:")
-print(f"cd {DATA_DIR}/{host} && tail -f noteworthy.txt | xargs -I {{}} notify-send {{}}")
-print()
-
-os.system("touch README.md")
-executed = []
-if os.path.isfile('executed.txt'):
-    with open('executed.txt', 'r') as f:
-        executed = [line.strip() for line in f.readlines()]
-
-
-do_cmd(f"sudo nmap -Pn -n -sS -p 80,443,8080 -T 5 -oA tcpscan {host} -vv",
+do_cmd(f"sudo -A nmap -Pn -n -sS -p 80,443,8080 -T 5 -oA tcpscan {host} -vv",
     noteworthy=r'^Discovered open port ([0-9]+)',
     msg_format="Found port {0}"
 )
